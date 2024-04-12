@@ -1,17 +1,21 @@
 ﻿using MouseRecording.Utils;
+using System;
 using System.Data;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.IO;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace MouseRecording
 {
 	public partial class MainWindow : Window
 	{
 		private HeatMap heatmap;
+		private DispatcherTimer mouseTimer;
 
 		public MainWindow()
 		{
@@ -27,10 +31,37 @@ namespace MouseRecording
 			grid.Children.Add(heatmap);
 		}
 
-		private void MouseMoveHandler(object sender, MouseEventArgs e)
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetCursorPos(ref Win32Point pt);
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct Win32Point
 		{
-			int xCoord = (int)e.GetPosition(null).X;
-			int yCoord = (int)e.GetPosition(null).Y;
+			public int X;
+			public int Y;
+		};
+
+		private void StartMouseTimer()
+		{
+			mouseTimer = new DispatcherTimer();
+			mouseTimer.Interval = TimeSpan.FromMilliseconds(3); // Set interval to 3 milliseconds
+			mouseTimer.Tick += MouseTimer_Tick;
+			mouseTimer.Start();
+		}
+
+		private void StopMouseTimer()
+		{
+			mouseTimer?.Stop();
+		}
+
+		private void MouseTimer_Tick(object sender, EventArgs e)
+		{
+			Win32Point point = new Win32Point();
+			GetCursorPos(ref point);
+
+			int xCoord = point.X;
+			int yCoord = point.Y;
 
 			DatabaseHelper.InsertMouseCoordinates(xCoord, yCoord);
 
@@ -38,47 +69,24 @@ namespace MouseRecording
 			heatmap.AddHeatPoint(xCoord, yCoord, 255); // You can adjust the intensity as needed
 		}
 
+		private void StartRecBtn_Click(object sender, RoutedEventArgs e)
+		{
+			StartMouseTimer();
+		}
+
+		private void Stop_Click(object sender, RoutedEventArgs e)
+		{
+			StopMouseTimer();
+		}
+
 		private void UpdateHeatMap()
 		{
 			heatmap.Render();
 		}
 
-		private void StartRecBtn_Click(object sender, RoutedEventArgs e)
-		{
-			MouseRecHelper.StartTracking(MouseMoveHandler);
-		}
-
-		private void Stop_Click(object sender, RoutedEventArgs e)
-		{
-			MouseRecHelper.StopTracking();
-		}
-
 		private void generateHeatmapBtn_Click(object sender, RoutedEventArgs e)
 		{
 			UpdateHeatMap();
-			ExportHeatmapAsImage(heatmap, "heatmap_image.jpg");
-			heatmap.RenderAndExport("heatmap_image.jpg");
-
-		}
-
-		private void ExportHeatmapAsImage(FrameworkElement element, string filePath)
-		{
-			// Create a RenderTargetBitmap to render the heatmap
-			RenderTargetBitmap rtb = new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-			rtb.Render(element);
-
-			// Create a JPEG encoder
-			BitmapEncoder encoder = new JpegBitmapEncoder();
-			encoder.Frames.Add(BitmapFrame.Create(rtb));
-
-			// Save the image to file
-			using (var stream = File.Create(filePath))
-			{
-				encoder.Save(stream);
-			}
-
-			MessageBox.Show($"Heatmap image saved to:\n{filePath}", "Heatmap Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 	}
-
 }

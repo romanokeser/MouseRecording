@@ -20,7 +20,7 @@ namespace MouseRecording
 		private List<HeatPoint> heatPoints = new List<HeatPoint>(); // Points of the heat map
 		private readonly RadialGradientBrush[] brushes; // Monochrome brushes used for heat map drawing
 
-		
+
 		public HeatMap()
 		{
 
@@ -53,6 +53,40 @@ namespace MouseRecording
 			heatPoints.Clear();
 		}
 
+		//public void Render()
+		//{
+		//	double widthHeight;
+		//	var mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
+
+		//	heatMapVisuals.Clear();
+
+		//	RenderTargetBitmap rtb = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
+		//	DrawingVisual drawingVisual = new DrawingVisual();
+
+		//	using (DrawingContext dc = drawingVisual.RenderOpen())
+		//	{
+		//		foreach (DataRow row in mouseCoordinates.Rows)
+		//		{
+		//			int x = Convert.ToInt32(row["x_coord"]);
+		//			int y = Convert.ToInt32(row["y_coord"]);
+		//			byte intensity = 50; //intensity value for each point
+
+		//			widthHeight = intensity / 5;
+
+		//			dc.DrawRectangle(brushes[intensity], null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
+		//		}
+
+		//		heatMapVisuals.Add(drawingVisual);
+		//		rtb.Render(drawingVisual);
+		//	}
+		//	BitmapEncoder encoder = new JpegBitmapEncoder();
+		//	encoder.Frames.Add(BitmapFrame.Create(rtb));
+		//	using (var stream = File.Create("heatmap_image1.jpg"))
+		//	{
+		//		encoder.Save(stream);
+		//	}
+		//}
+
 		public void Render()
 		{
 			double widthHeight;
@@ -64,60 +98,38 @@ namespace MouseRecording
 
 			using (DrawingContext dc = drawingVisual.RenderOpen())
 			{
+				RenderOptions.SetEdgeMode(drawingVisual, EdgeMode.Aliased);
+				RenderOptions.SetBitmapScalingMode(drawingVisual, BitmapScalingMode.LowQuality);
+
 				foreach (DataRow row in mouseCoordinates.Rows)
 				{
 					int x = Convert.ToInt32(row["x_coord"]);
 					int y = Convert.ToInt32(row["y_coord"]);
-					byte intensity = 255; // Assuming the intensity value for each point
+					byte intensity = 15; //intensity value for each point
 
 					widthHeight = intensity / 5;
 
 					dc.DrawRectangle(brushes[intensity], null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
 				}
-
-				heatMapVisuals.Add(drawingVisual);
-			}
-		}
-
-		public void RenderAndExport(string filePath)
-		{
-			var mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
-
-			// Create a RenderTargetBitmap to render the heatmap
-			RenderTargetBitmap rtb = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Pbgra32);
-
-			DrawingVisual drawingVisual = new DrawingVisual();
-
-			using (DrawingContext dc = drawingVisual.RenderOpen())
-			{
-				foreach (DataRow row in mouseCoordinates.Rows)
-				{
-					int x = Convert.ToInt32(row["x_coord"]);
-					int y = Convert.ToInt32(row["y_coord"]);
-					byte intensity = 255; // Assuming the intensity value for each point
-
-					double widthHeight = intensity / 5;
-
-					// Draw rectangles representing the heatmap points
-					dc.DrawRectangle(brushes[intensity], null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
-				}
-
-				// Render the drawing visual onto the RenderTargetBitmap
-				rtb.Render(drawingVisual);
 			}
 
-			// Create a JpegBitmapEncoder and add the rendered bitmap to it
+			// Create a RenderTargetBitmap to hold the visual content (optional, if needed for other purposes)
+			RenderTargetBitmap rtb = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
+			rtb.Render(drawingVisual);
+
+			// Create a JpegBitmapEncoder and add the visual content to it
 			BitmapEncoder encoder = new JpegBitmapEncoder();
 			encoder.Frames.Add(BitmapFrame.Create(rtb));
 
 			// Save the encoder's frames into a file stream as a JPG image
-			using (var stream = File.Create(filePath))
+			using (var stream = File.Create("heatmap_image1.jpg"))
 			{
 				encoder.Save(stream);
 			}
 		}
 
 
+		}
 	}
 
 	public struct HeatPoint
