@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:MouseRecording"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+    <Grid x:Name="grid" Background="Black">
+        <Button x:Name="startRecBtn" Content="Rec" HorizontalAlignment="Left" Height="25" Margin="107,125,0,0" VerticalAlignment="Top" Width="70" Click="StartRecBtn_Click"/>
+        <Button x:Name="stopRecBtn" Content="Stop" HorizontalAlignment="Left" Height="25" Margin="107,157,0,0" VerticalAlignment="Top" Width="70" Click="Stop_Click"/>
+        <Button x:Name="gaenerateHeatmapBtn" Content="Generate heatmap" HorizontalAlignment="Left" Height="25" Margin="107,189,0,0" VerticalAlignment="Top" Width="110" Click="generateHeatmapBtn_Click"/>
+        <Grid HorizontalAlignment="Left" Height="77" Margin="330,125,0,0" VerticalAlignment="Top" Width="124"/>
     </Grid>
+
 </Window>
