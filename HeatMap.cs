@@ -53,48 +53,22 @@ namespace MouseRecording
 			heatPoints.Clear();
 		}
 
-		//public void Render()
-		//{
-		//	double widthHeight;
-		//	var mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
-
-		//	heatMapVisuals.Clear();
-
-		//	RenderTargetBitmap rtb = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
-		//	DrawingVisual drawingVisual = new DrawingVisual();
-
-		//	using (DrawingContext dc = drawingVisual.RenderOpen())
-		//	{
-		//		foreach (DataRow row in mouseCoordinates.Rows)
-		//		{
-		//			int x = Convert.ToInt32(row["x_coord"]);
-		//			int y = Convert.ToInt32(row["y_coord"]);
-		//			byte intensity = 50; //intensity value for each point
-
-		//			widthHeight = intensity / 5;
-
-		//			dc.DrawRectangle(brushes[intensity], null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
-		//		}
-
-		//		heatMapVisuals.Add(drawingVisual);
-		//		rtb.Render(drawingVisual);
-		//	}
-		//	BitmapEncoder encoder = new JpegBitmapEncoder();
-		//	encoder.Frames.Add(BitmapFrame.Create(rtb));
-		//	using (var stream = File.Create("heatmap_image1.jpg"))
-		//	{
-		//		encoder.Save(stream);
-		//	}
-		//}
 
 		public void Render()
 		{
 			double widthHeight;
 			var mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
-
 			heatMapVisuals.Clear();
-
 			DrawingVisual drawingVisual = new DrawingVisual();
+
+			int screenWidth = 1920;
+			int screenHeight = 1080;
+			int numCellsX = 20;
+			int numCellsY = 20;
+			int threshold = 20;
+
+			int[,] cellCounts = CountMouseCoordinates(mouseCoordinates, screenWidth, screenHeight, numCellsX, numCellsY);
+
 
 			using (DrawingContext dc = drawingVisual.RenderOpen())
 			{
@@ -109,7 +83,10 @@ namespace MouseRecording
 
 					widthHeight = intensity / 5;
 
-					dc.DrawRectangle(brushes[intensity], null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
+					// Based on the result of ColorClusters, decide the color of the rectangle
+					SolidColorBrush brush = GetRectangleBrush(x, y, cellCounts, numCellsX, numCellsY);
+
+					dc.DrawRectangle(brush, null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
 				}
 			}
 
@@ -128,21 +105,63 @@ namespace MouseRecording
 			}
 		}
 
+		private int[,] CountMouseCoordinates(DataTable mouseCoordinates, int screenWidth, int screenHeight, int numCellsX, int numCellsY)
+		{
+			double cellWidth = screenWidth / numCellsX;
+			double cellHeight = screenHeight / numCellsY;
 
+			int[,] cellCounts = new int[numCellsX, numCellsY];
+
+			// Count the points in each cell
+			foreach (DataRow row in mouseCoordinates.Rows)
+			{
+				int x = Convert.ToInt32(row["x_coord"]);
+				int y = Convert.ToInt32(row["y_coord"]);
+
+				int cellX = (int)(x / cellWidth);
+				int cellY = (int)(y / cellHeight);
+
+				cellCounts[cellX, cellY]++;
+			}
+
+			return cellCounts;
 		}
+
+		private SolidColorBrush GetRectangleBrush(int x, int y, int[,] cellCounts, int numCellsX, int numCellsY)
+		{
+			// Determine the cell coordinates
+			double cellWidth = (double)1920 / numCellsX;
+			double cellHeight = (double)1080 / numCellsY;
+			int cellX = (int)(x / cellWidth);
+			int cellY = (int)(y / cellHeight);
+
+			// Check if the cell count exceeds the threshold
+			if (cellCounts[cellX, cellY] > 20)
+			{
+				return Brushes.Red;
+			}
+			else
+			{
+				return Brushes.White;
+			}
+		}
+
 	}
 
-	public struct HeatPoint
-	{
-		public int X;
-		public int Y;
-		public byte Intensity;
 
-		public HeatPoint(int x, int y, byte intensity)
-		{
-			X = x;
-			Y = y;
-			Intensity = intensity;
-		}
+}
+
+public struct HeatPoint
+{
+	public int X;
+	public int Y;
+	public byte Intensity;
+
+	public HeatPoint(int x, int y, byte intensity)
+	{
+		X = x;
+		Y = y;
+		Intensity = intensity;
 	}
 }
+
