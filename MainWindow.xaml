@@ -7,10 +7,16 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid x:Name="grid" Background="Black">
-        <Button x:Name="startRecBtn" Content="Rec" HorizontalAlignment="Left" Height="21" Margin="543,305,0,0" VerticalAlignment="Top" Width="86" Click="StartRecBtn_Click"/>
-        <Button x:Name="stopRecBtn" Content="Stop" HorizontalAlignment="Left" Height="21" Margin="543,331,0,0" VerticalAlignment="Top" Width="86" Click="Stop_Click"/>
-        <Button x:Name="gaenerateHeatmapBtn" Content="Generate heatmap" HorizontalAlignment="Left" Height="21" Margin="543,358,0,0" VerticalAlignment="Top" Width="137" Click="generateHeatmapBtn_Click"/>
-        <Grid HorizontalAlignment="Left" Height="77" Margin="330,125,0,0" VerticalAlignment="Top" Width="124"/>
+        <Button x:Name="startRecBtn" Content="Rec" HorizontalAlignment="Left" Height="20" Margin="10,44,0,0" VerticalAlignment="Top" Width="86" Click="StartRecBtn_Click"/>
+        <Button x:Name="stopRecBtn" Content="Stop" HorizontalAlignment="Left" Height="20" Margin="10,70,0,0" VerticalAlignment="Top" Width="86" Click="Stop_Click"/>
+        <Button x:Name="gaenerateHeatmapBtn" Content="Generate heatmap" HorizontalAlignment="Left" Height="20" Margin="10,96,0,0" VerticalAlignment="Top" Width="137" Click="generateHeatmapBtn_Click"/>
+        <Button x:Name="openImageBtn" Content="Open Generated Image" HorizontalAlignment="Left" Height="20" Margin="10,125,0,0" VerticalAlignment="Top" Width="137" Click="openImageBtn_Click"/>
+        <Button x:Name="clearRecsBtn" Content="Clear all records" HorizontalAlignment="Left" Height="20" Margin="10,154,0,0" VerticalAlignment="Top" Width="137" Click="clearRecsBtn_Click"/>
+        <Button x:Name="openPopupBtn" Content="Open popup" HorizontalAlignment="Left" Height="19" Margin="234,183,0,0" VerticalAlignment="Top" Width="91" Click="openPopupBtn_Click"/>
+        <Grid HorizontalAlignment="Left" Height="228" Margin="391,44,0,0" VerticalAlignment="Top" Width="271">
+            <Label x:Name="nameOfTheRec_label" Content="Name of the record:" HorizontalAlignment="Left" Height="26" Margin="10,44,0,0" VerticalAlignment="Top" Width="126" Foreground="White"/>
+            <TextBox x:Name="recordNameTextbox" HorizontalAlignment="Left" Height="22" Margin="141,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Foreground="Gray" AutomationProperties.Name="nameOfRecTextbox" VerticalContentAlignment="Center"/>
+        </Grid>
     </Grid>
 
 </Window>

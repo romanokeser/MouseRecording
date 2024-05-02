@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -57,7 +58,6 @@ namespace MouseRecording
 		public void Render()
 		{
 			double widthHeight;
-			var mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
 			heatMapVisuals.Clear();
 			DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -67,8 +67,7 @@ namespace MouseRecording
 			int numCellsY = 20;
 			int threshold = 20;
 
-			int[,] cellCounts = CountMouseCoordinates(mouseCoordinates, screenWidth, screenHeight, numCellsX, numCellsY);
-
+			DataTable mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
 
 			using (DrawingContext dc = drawingVisual.RenderOpen())
 			{
@@ -77,16 +76,19 @@ namespace MouseRecording
 
 				foreach (DataRow row in mouseCoordinates.Rows)
 				{
-					int x = Convert.ToInt32(row["x_coord"]);
-					int y = Convert.ToInt32(row["y_coord"]);
-					byte intensity = 15; //intensity value for each point
+					byte[] coordinatesBytes = (byte[])row["coordinates"];
+					List<(int, int)> recordedCoordinates = DeserializeCoordinatesList(coordinatesBytes);
 
-					widthHeight = intensity / 5;
+					foreach (var (x, y) in recordedCoordinates)
+					{
+						byte intensity = 15; // intensity value for each point
+						widthHeight = intensity / 5;
 
-					// Based on the result of ColorClusters, decide the color of the rectangle
-					SolidColorBrush brush = GetRectangleBrush(x, y, cellCounts, numCellsX, numCellsY);
+						// Based on the result of ColorClusters, decide the color of the rectangle
+						SolidColorBrush brush = GetRectangleBrush(x, y, coordinatesBytes, numCellsX, numCellsY, threshold);
 
-					dc.DrawRectangle(brush, null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
+						dc.DrawRectangle(brush, null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
+					}
 				}
 			}
 
@@ -99,25 +101,63 @@ namespace MouseRecording
 			encoder.Frames.Add(BitmapFrame.Create(rtb));
 
 			// Save the encoder's frames into a file stream as a JPG image
-			using (var stream = File.Create("heatmap_image1.jpg"))
+			string imagePath = "heatmap_image1.jpg";
+			using (var stream = File.Create(imagePath))
 			{
 				encoder.Save(stream);
 			}
+
+			OpenImageFile(imagePath);
 		}
 
-		private int[,] CountMouseCoordinates(DataTable mouseCoordinates, int screenWidth, int screenHeight, int numCellsX, int numCellsY)
+		private List<(int, int)> DeserializeCoordinatesList(byte[] coordinatesBytes)
 		{
-			double cellWidth = screenWidth / numCellsX;
-			double cellHeight = screenHeight / numCellsY;
+			List<(int, int)> recordedCoordinates = new List<(int, int)>();
+
+			using (MemoryStream ms = new MemoryStream(coordinatesBytes))
+			{
+				using (BinaryReader reader = new BinaryReader(ms))
+				{
+					// Read the number of coordinates from the stream
+					int count = reader.ReadInt32();
+
+					// Read each coordinate pair from the stream
+					for (int i = 0; i < count; i++)
+					{
+						int x = reader.ReadInt32();
+						int y = reader.ReadInt32();
+						recordedCoordinates.Add((x, y));
+					}
+				}
+			}
+
+			return recordedCoordinates;
+		}
+
+
+		private void OpenImageFile(string filePath)
+		{
+			try
+			{
+				Process.Start(filePath);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred while trying to open the image file: {ex.Message}");
+			}
+		}
+
+		private int[,] CountMouseCoordinates(byte[] allCoordinatesBlob, int numCellsX, int numCellsY)
+		{
+			double cellWidth = (double)1920 / numCellsX;
+			double cellHeight = (double)1080 / numCellsY;
 
 			int[,] cellCounts = new int[numCellsX, numCellsY];
 
-			// Count the points in each cell
-			foreach (DataRow row in mouseCoordinates.Rows)
-			{
-				int x = Convert.ToInt32(row["x_coord"]);
-				int y = Convert.ToInt32(row["y_coord"]);
+			List<(int, int)> recordedCoordinates = DeserializeCoordinatesList(allCoordinatesBlob);
 
+			foreach (var (x, y) in recordedCoordinates)
+			{
 				int cellX = (int)(x / cellWidth);
 				int cellY = (int)(y / cellHeight);
 
@@ -127,16 +167,17 @@ namespace MouseRecording
 			return cellCounts;
 		}
 
-		private SolidColorBrush GetRectangleBrush(int x, int y, int[,] cellCounts, int numCellsX, int numCellsY)
+		private SolidColorBrush GetRectangleBrush(int x, int y, byte[] allCoordinatesBlob, int numCellsX, int numCellsY, int threshold)
 		{
-			// Determine the cell coordinates
 			double cellWidth = (double)1920 / numCellsX;
 			double cellHeight = (double)1080 / numCellsY;
 			int cellX = (int)(x / cellWidth);
 			int cellY = (int)(y / cellHeight);
 
+			int[,] cellCounts = CountMouseCoordinates(allCoordinatesBlob, numCellsX, numCellsY);
+
 			// Check if the cell count exceeds the threshold
-			if (cellCounts[cellX, cellY] > 20)
+			if (cellCounts[cellX, cellY] > threshold)
 			{
 				return Brushes.Red;
 			}
@@ -147,8 +188,6 @@ namespace MouseRecording
 		}
 
 	}
-
-
 }
 
 public struct HeatPoint

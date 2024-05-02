@@ -1,0 +1,8 @@
+﻿<Window x:Class="MouseRecording.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Notification" Height="100" Width="300">
+    <Grid>
+        <TextBlock Text="Notification Content" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

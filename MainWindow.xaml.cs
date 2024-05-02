@@ -1,6 +1,7 @@
 ﻿using MouseRecording.Utils;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -14,8 +15,9 @@ namespace MouseRecording
 {
 	public partial class MainWindow : Window
 	{
-		private HeatMap heatmap;
-		private DispatcherTimer mouseTimer;
+		private HeatMap _heatmap;
+		private DispatcherTimer _mouseTimer;
+		private readonly List<(int, int)> _recordedCoordinates = [];
 
 		public MainWindow()
 		{
@@ -26,11 +28,11 @@ namespace MouseRecording
 
 		private void InitializeHeatMap()
 		{
-			heatmap = new HeatMap();
-			Grid.SetRow(heatmap, 1);
-			grid.Children.Add(heatmap);
+			_heatmap = new HeatMap();
+			Grid.SetRow(_heatmap, 1);
+			//grid.Children.Add(heatmap);
 		}
-
+		
 		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetCursorPos(ref Win32Point pt);
@@ -44,15 +46,17 @@ namespace MouseRecording
 
 		private void StartMouseTimer()
 		{
-			mouseTimer = new DispatcherTimer();
-			mouseTimer.Interval = TimeSpan.FromMilliseconds(3); // Set interval to 3 milliseconds
-			mouseTimer.Tick += MouseTimer_Tick;
-			mouseTimer.Start();
+			_mouseTimer = new DispatcherTimer();
+			_mouseTimer.Interval = TimeSpan.FromMilliseconds(3); // Set interval to 3 milliseconds
+			_mouseTimer.Tick += MouseTimer_Tick;
+			_mouseTimer.Start();
 		}
 
 		private void StopMouseTimer()
 		{
-			mouseTimer?.Stop();
+			_mouseTimer?.Stop();
+			string recordName = recordNameTextbox.Text;
+			DatabaseHelper.InsertMouseCoordinates(recordName, _recordedCoordinates);
 		}
 
 		private void MouseTimer_Tick(object sender, EventArgs e)
@@ -63,14 +67,15 @@ namespace MouseRecording
 			int xCoord = point.X;
 			int yCoord = point.Y;
 
-			DatabaseHelper.InsertMouseCoordinates(xCoord, yCoord);
+			_recordedCoordinates.Add((xCoord, yCoord));
 
 			// Add the mouse coordinates to the heatmap
-			heatmap.AddHeatPoint(xCoord, yCoord, 255); // You can adjust the intensity as needed
+			_heatmap.AddHeatPoint(xCoord, yCoord, 255);
 		}
 
 		private void StartRecBtn_Click(object sender, RoutedEventArgs e)
 		{
+			_recordedCoordinates.Clear(); // Clear previously recorded coordinates
 			StartMouseTimer();
 		}
 
@@ -81,12 +86,38 @@ namespace MouseRecording
 
 		private void UpdateHeatMap()
 		{
-			heatmap.Render();
+			_heatmap.Render();
 		}
 
 		private void generateHeatmapBtn_Click(object sender, RoutedEventArgs e)
 		{
 			UpdateHeatMap();
+		}
+
+		private void openImageBtn_Click(object sender, RoutedEventArgs e)
+		{
+			string imagePath = "heatmap_image1.jpg";
+			try
+			{
+				Process.Start("explorer.exe", imagePath);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred while trying to open the image file: {ex.Message}");
+				// Handle the exception as needed
+			}
+		}
+
+		private void clearRecsBtn_Click(object sender, RoutedEventArgs e)
+		{
+			DatabaseHelper.WipeAllData();
+		}
+
+		private void openPopupBtn_Click(object sender, RoutedEventArgs e)
+		{
+			var notificationWindow = new NotificationWindow();
+			notificationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			notificationWindow.Show();
 		}
 	}
 }
