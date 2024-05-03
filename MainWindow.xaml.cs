@@ -15,24 +15,6 @@ namespace MouseRecording
 {
 	public partial class MainWindow : Window
 	{
-		private HeatMap _heatmap;
-		private DispatcherTimer _mouseTimer;
-		private readonly List<(int, int)> _recordedCoordinates = [];
-
-		public MainWindow()
-		{
-			InitializeComponent();
-			InitializeHeatMap();
-			DatabaseHelper.InitializeDatabase();
-		}
-
-		private void InitializeHeatMap()
-		{
-			_heatmap = new HeatMap();
-			Grid.SetRow(_heatmap, 1);
-			//grid.Children.Add(heatmap);
-		}
-		
 		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetCursorPos(ref Win32Point pt);
@@ -43,6 +25,23 @@ namespace MouseRecording
 			public int X;
 			public int Y;
 		};
+
+		private HeatMap _heatmap;
+		private DispatcherTimer _mouseTimer;
+		private readonly List<(int, int)> _recordedCoordinates = [];
+
+		public MainWindow()
+		{
+			InitializeHeatMap();
+			DatabaseHelper.InitializeDatabase();
+		}
+
+		private void InitializeHeatMap()
+		{
+			_heatmap = new HeatMap();
+			Grid.SetRow(_heatmap, 1);
+		}
+		
 
 		private void StartMouseTimer()
 		{

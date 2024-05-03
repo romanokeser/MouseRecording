@@ -1,0 +1,16 @@
+﻿<Window x:Class="MouseRecording.SuccessfulRecordingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MouseRecording"
+        mc:Ignorable="d"
+        Title="SuccessfulRecordingWindow" Height="450" Width="800">
+    <Grid>
+        <Label Content="Succes!" HorizontalAlignment="Center" Margin="0,76,0,0" VerticalAlignment="Top" FontSize="22"/>
+        <Label Content="You can now review your mouse activity" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="reviewHeatmapBtn" Content="REVIEW" HorizontalAlignment="Left" Height="41" Margin="328,322,0,0" VerticalAlignment="Top" Width="159" Click="reviewHeatmapBtn_Click"/>
+        <Button Content="Back" HorizontalAlignment="Left" Height="24" Margin="10,27,0,0" VerticalAlignment="Top" Width="81" Click="Button_Click"/>
+
+    </Grid>
+</Window>
