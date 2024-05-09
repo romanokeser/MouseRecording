@@ -10,7 +10,7 @@
         <Label Content="Succes!" HorizontalAlignment="Center" Margin="0,76,0,0" VerticalAlignment="Top" FontSize="22"/>
         <Label Content="You can now review your mouse activity" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top"/>
         <Button x:Name="reviewHeatmapBtn" Content="REVIEW" HorizontalAlignment="Left" Height="41" Margin="328,322,0,0" VerticalAlignment="Top" Width="159" Click="reviewHeatmapBtn_Click"/>
-        <Button Content="Back" HorizontalAlignment="Left" Height="24" Margin="10,27,0,0" VerticalAlignment="Top" Width="81" Click="Button_Click"/>
+        <Button x:Name="backBtn" Content="Back" HorizontalAlignment="Left" Height="24" Margin="10,27,0,0" VerticalAlignment="Top" Width="81" Click="backBtn_Click"/>
 
     </Grid>
 </Window>

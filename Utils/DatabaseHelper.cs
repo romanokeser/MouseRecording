@@ -74,7 +74,6 @@ namespace MouseRecording.Utils
 			}
 		}
 
-
 		public static DataTable GetMouseCoordinates()
 		{
 			var dataTable = new DataTable();
@@ -96,6 +95,31 @@ namespace MouseRecording.Utils
 
 			return dataTable;
 		}
+
+		public static DataTable GetMouseCoordinates(string recordName)
+		{
+			var dataTable = new DataTable();
+
+			using (var connection = new SQLiteConnection($"Data Source={DatabaseFileName};Version=3;"))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					// Modify the query to select mouse coordinates for a specific recording
+					command.CommandText = "SELECT * FROM mouse_coordinates WHERE record_name = @recordName";
+					command.Parameters.AddWithValue("@recordName", recordName);
+
+					using (var adapter = new SQLiteDataAdapter(command))
+					{
+						adapter.Fill(dataTable);
+					}
+				}
+			}
+
+			return dataTable;
+		}
+
 
 		public static DataTable WipeAllData()
 		{

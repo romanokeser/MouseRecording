@@ -39,7 +39,7 @@ namespace MouseRecording
 		private void InitializeHeatMap()
 		{
 			_heatmap = new HeatMap();
-			Grid.SetRow(_heatmap, 1);
+			//Grid.SetRow(_heatmap, 1);
 		}
 		
 
@@ -85,7 +85,7 @@ namespace MouseRecording
 
 		private void UpdateHeatMap()
 		{
-			_heatmap.Render();
+			_heatmap.Render(RecordingNameHolder.CurrentRecordingName);
 		}
 
 		private void generateHeatmapBtn_Click(object sender, RoutedEventArgs e)

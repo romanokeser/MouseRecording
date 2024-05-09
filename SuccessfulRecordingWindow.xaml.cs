@@ -1,40 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MouseRecording.Utils;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace MouseRecording
 {
-    /// <summary>
-    /// Interaction logic for SuccessfulRecordingWindow.xaml
-    /// </summary>
-    public partial class SuccessfulRecordingWindow : Window
-    {
-        public SuccessfulRecordingWindow()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for SuccessfulRecordingWindow.xaml
+	/// </summary>
+	public partial class SuccessfulRecordingWindow : Window
+	{
+		private CreateNewRecordingWindow _createNewRecordingWindow;
+		private HeatMap _heatMap;
+		public SuccessfulRecordingWindow(CreateNewRecordingWindow createNewRecordingWindow)
+		{
+			_createNewRecordingWindow = createNewRecordingWindow;
+			_heatMap = new HeatMap();
+
+			InitializeComponent();
+		}
 
 		private void reviewHeatmapBtn_Click(object sender, RoutedEventArgs e)
 		{
-            //open the image! todo
-        }
+			string imagePath = RecordingNameHolder.CurrentRecordingName;
+			_heatMap.Render(imagePath);
+			try
+			{
+				Process.Start("explorer.exe", imagePath + ".jpg");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred while trying to open the image file: {ex.Message}");
+			}
+		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void backBtn_Click(object sender, RoutedEventArgs e)
 		{
-            var initialWindow = new StartupWindow();
-            initialWindow.Activate();
-            initialWindow.Show();
-            this.Close();
-        }
-    }
+			var startupWindow = new StartupWindow();
+			startupWindow.Activate();
+			startupWindow.Show();
+			this.Close();
+		}
+	}
 }

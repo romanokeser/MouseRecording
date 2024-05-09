@@ -54,20 +54,17 @@ namespace MouseRecording
 			heatPoints.Clear();
 		}
 
-
-		public void Render()
+		public void Render(string currentRecordingName)
 		{
 			double widthHeight;
 			heatMapVisuals.Clear();
 			DrawingVisual drawingVisual = new DrawingVisual();
 
-			int screenWidth = 1920;
-			int screenHeight = 1080;
 			int numCellsX = 20;
 			int numCellsY = 20;
 			int threshold = 20;
 
-			DataTable mouseCoordinates = DatabaseHelper.GetMouseCoordinates();
+			DataTable mouseCoordinates = DatabaseHelper.GetMouseCoordinates(currentRecordingName); // Modify this line
 
 			using (DrawingContext dc = drawingVisual.RenderOpen())
 			{
@@ -101,7 +98,7 @@ namespace MouseRecording
 			encoder.Frames.Add(BitmapFrame.Create(rtb));
 
 			// Save the encoder's frames into a file stream as a JPG image
-			string imagePath = "heatmap_image1.jpg";
+			string imagePath = $"{currentRecordingName}.jpg"; // Use currentRecordingName parameter
 			using (var stream = File.Create(imagePath))
 			{
 				encoder.Save(stream);
@@ -109,6 +106,7 @@ namespace MouseRecording
 
 			OpenImageFile(imagePath);
 		}
+
 
 		private List<(int, int)> DeserializeCoordinatesList(byte[] coordinatesBytes)
 		{

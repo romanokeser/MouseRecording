@@ -19,17 +19,21 @@ namespace MouseRecording
     /// </summary>
     public partial class RecordingFinalWindow : Window
     {
-        public RecordingFinalWindow()
+		private CreateNewRecordingWindow _createNewRecordingWindow;
+		public RecordingFinalWindow(CreateNewRecordingWindow createNewRecordingWindow)
         {
             InitializeComponent();
-        }
+			_createNewRecordingWindow = createNewRecordingWindow;
+		}
 
 		private void stopRecordingBtn_Click(object sender, RoutedEventArgs e)
 		{
-            var succesfulRecordinWindow = new SuccessfulRecordingWindow();
-            succesfulRecordinWindow.Activate();
-            succesfulRecordinWindow.Show();
-            this.Close();
+			_createNewRecordingWindow.StopMouseTimer();
+
+			var succesfulRecordinWindow = new SuccessfulRecordingWindow(_createNewRecordingWindow);
+			succesfulRecordinWindow.Activate();
+			succesfulRecordinWindow.Show();
+			this.Close();
 		}
 	}
 }
