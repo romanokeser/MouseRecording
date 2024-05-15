@@ -64,7 +64,9 @@ namespace MouseRecording
 			int numCellsY = 20;
 			int threshold = 20;
 
-			DataTable mouseCoordinates = DatabaseHelper.GetMouseCoordinates(currentRecordingName); // Modify this line
+			DataTable mouseCoordinates = DatabaseHelper.GetMouseCoordinates(currentRecordingName);
+
+			List<(int, int)> recordedCoordinates = new List<(int, int)>();
 
 			using (DrawingContext dc = drawingVisual.RenderOpen())
 			{
@@ -74,39 +76,100 @@ namespace MouseRecording
 				foreach (DataRow row in mouseCoordinates.Rows)
 				{
 					byte[] coordinatesBytes = (byte[])row["coordinates"];
-					List<(int, int)> recordedCoordinates = DeserializeCoordinatesList(coordinatesBytes);
+					recordedCoordinates = DeserializeCoordinatesList(coordinatesBytes);
 
 					foreach (var (x, y) in recordedCoordinates)
 					{
 						byte intensity = 15; // intensity value for each point
 						widthHeight = intensity / 5;
 
-						// Based on the result of ColorClusters, decide the color of the rectangle
 						SolidColorBrush brush = GetRectangleBrush(x, y, coordinatesBytes, numCellsX, numCellsY, threshold);
 
 						dc.DrawRectangle(brush, null, new Rect(x - widthHeight / 2, y - widthHeight / 2, widthHeight, widthHeight));
 					}
+					StorePointCountFromRectangle(recordedCoordinates, numCellsX, numCellsY);
 				}
 			}
 
-			// Create a RenderTargetBitmap to hold the visual content (optional, if needed for other purposes)
 			RenderTargetBitmap rtb = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
 			rtb.Render(drawingVisual);
 
-			// Create a JpegBitmapEncoder and add the visual content to it
 			BitmapEncoder encoder = new JpegBitmapEncoder();
 			encoder.Frames.Add(BitmapFrame.Create(rtb));
 
-			// Save the encoder's frames into a file stream as a JPG image
-			string imagePath = $"{currentRecordingName}.jpg"; // Use currentRecordingName parameter
+			string imagePath = $"{currentRecordingName}.jpg";
 			using (var stream = File.Create(imagePath))
 			{
 				encoder.Save(stream);
 			}
 
 			OpenImageFile(imagePath);
+
+			string filePath = currentRecordingName + ".txt";
+			int[,] counts = StorePointCountFromRectangle(recordedCoordinates, numCellsX, numCellsY);
+			WritePointCountsToFile(counts, filePath);
+
+			// Call the Python script with the file path as an argument
+			string pythonScriptPath = @"D:\MouseRecording\render.py"; // Update this path
+			string pythonInterpreter = @"python";
+
+			System.Diagnostics.ProcessStartInfo start = new System.Diagnostics.ProcessStartInfo
+			{
+				FileName = pythonInterpreter,
+				Arguments = $"{pythonScriptPath} {filePath}",
+				UseShellExecute = false,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				CreateNoWindow = true
+			};
+
+			using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(start))
+			{
+				using (System.IO.StreamReader reader = process.StandardOutput)
+				{
+					string result = reader.ReadToEnd();
+					Console.Write(result);
+				}
+			}
 		}
 
+
+
+
+		private int[,] StorePointCountFromRectangle(List<(int, int)> points, int numCellsX, int numCellsY)
+		{
+			int[,] pointCounts = new int[numCellsX, numCellsY];
+
+			foreach (var (x, y) in points)
+			{
+				// Determine which cell the point belongs to
+				int cellX = (int)Math.Floor((double)x / (1920 / numCellsX));
+				int cellY = (int)Math.Floor((double)y / (1080 / numCellsY));
+
+				// Increment the count for the corresponding cell
+				pointCounts[cellX, cellY]++;
+			}
+
+			return pointCounts;
+		}
+
+		private void WritePointCountsToFile(int[,] pointCounts, string filePath)
+		{
+			using (StreamWriter writer = new StreamWriter(filePath))
+			{
+				int numRows = pointCounts.GetLength(0);
+				int numCols = pointCounts.GetLength(1);
+
+				for (int i = 0; i < numRows; i++)
+				{
+					for (int j = 0; j < numCols; j++)
+					{
+						writer.Write(pointCounts[i, j] + " ");
+					}
+					writer.WriteLine();
+				}
+			}
+		}
 
 		private List<(int, int)> DeserializeCoordinatesList(byte[] coordinatesBytes)
 		{

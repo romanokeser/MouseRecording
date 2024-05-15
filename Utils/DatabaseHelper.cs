@@ -21,10 +21,10 @@ namespace MouseRecording.Utils
 					using (var command = new SQLiteCommand(connection))
 					{
 						command.CommandText = @"
-                        CREATE TABLE mouse_coordinates (
-                            x_coord INTEGER,
-                            y_coord INTEGER
-                        )";
+						CREATE TABLE mouse_coordinates (
+						    record_name TEXT,
+						    coordinates BLOB
+						)";
 						command.ExecuteNonQuery();
 					}
 				}
