@@ -24,14 +24,6 @@ namespace MouseRecording
 		{
 			string imagePath = RecordingNameHolder.CurrentRecordingName;
 			_heatMap.Render(imagePath);
-			try
-			{
-				Process.Start("explorer.exe", imagePath + ".jpg");
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"An error occurred while trying to open the image file: {ex.Message}");
-			}
 		}
 
 		private void backBtn_Click(object sender, RoutedEventArgs e)

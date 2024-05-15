@@ -13,13 +13,6 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Review"></Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
