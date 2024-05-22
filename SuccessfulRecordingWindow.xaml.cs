@@ -20,10 +20,23 @@ namespace MouseRecording
 			InitializeComponent();
 		}
 
-		private void reviewHeatmapBtn_Click(object sender, RoutedEventArgs e)
+		private async void reviewHeatmapBtn_Click(object sender, RoutedEventArgs e)
 		{
-			string imagePath = RecordingNameHolder.CurrentRecordingName;
-			_heatMap.Render(imagePath);
+			loadingScreen.Visibility = Visibility.Visible; // Show loading screen
+
+			try
+			{
+				string imagePath = RecordingNameHolder.CurrentRecordingName;
+				await Task.Run(() => _heatMap.Render(imagePath));
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"An error occurred: {ex.Message}");
+			}
+			finally
+			{
+				loadingScreen.Visibility = Visibility.Collapsed; // Hide loading screen
+			}
 		}
 
 		private void backBtn_Click(object sender, RoutedEventArgs e)
