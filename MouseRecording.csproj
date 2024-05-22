@@ -9,15 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Shaders\HeatColorizer.ps" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Shaders\HeatColorizer.ps" />
   </ItemGroup>
 
 </Project>

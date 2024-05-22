@@ -17,10 +17,10 @@ namespace MouseRecording
     /// <summary>
     /// Interaction logic for RecordingFinalWindow.xaml
     /// </summary>
-    public partial class RecordingFinalWindow : Window
+    public partial class ActiveRecWindow : Window
     {
 		private CreateNewRecordingWindow _createNewRecordingWindow;
-		public RecordingFinalWindow(CreateNewRecordingWindow createNewRecordingWindow)
+		public ActiveRecWindow(CreateNewRecordingWindow createNewRecordingWindow)
         {
             InitializeComponent();
 			_createNewRecordingWindow = createNewRecordingWindow;

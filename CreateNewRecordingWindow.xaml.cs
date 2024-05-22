@@ -22,7 +22,7 @@ namespace MouseRecording
 			public int Y;
 		};
 
-		private HeatMap _heatmap;
+		//private HeatMap _heatmap;
 		private DispatcherTimer _mouseTimer;
 		private readonly List<(int, int)> _recordedCoordinates = [];
 
@@ -35,7 +35,7 @@ namespace MouseRecording
 
 		private void InitializeHeatMap()
 		{
-			_heatmap = new HeatMap();
+			HeatMap _heatmap = new HeatMap();
 		}
 
 		private void StartMouseTimer()
@@ -72,7 +72,7 @@ namespace MouseRecording
 			_recordedCoordinates.Clear(); // Clear previously recorded coordinates
 			StartMouseTimer();
 
-			var recordingFinalWindow = new RecordingFinalWindow(this);
+			var recordingFinalWindow = new ActiveRecWindow(this);
 			recordingFinalWindow.Show();
 			recordingFinalWindow.Activate();
 			this.Close();

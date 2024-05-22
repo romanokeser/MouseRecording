@@ -14,9 +14,21 @@ with open(points_file_path, 'r') as file:
     lines = file.readlines()
     point_counts = [[int(num) for num in line.split()] for line in lines]
 
-# Set these values based on tracked mouse dots (0 - no activity, inf - max activity)
-grid_values = np.array(point_counts)
+# Rotate the grid by 90 degrees clockwise
+def rotate_clockwise(matrix):
+    return [list(reversed(col)) for col in zip(*matrix)]
 
+# Flip the grid horizontally
+def flip_horizontal(matrix):
+    return [list(reversed(row)) for row in matrix]
+
+rotated_grid_values = rotate_clockwise(point_counts)
+flipped_grid_values = flip_horizontal(rotated_grid_values)
+
+# Convert the flipped grid to a numpy array
+grid_values = np.array(flipped_grid_values)
+
+# Interpolate and plot the heatmap
 grid_tensor = torch.tensor(grid_values, dtype=torch.float)
 resized_grid = torch.nn.functional.interpolate(grid_tensor.unsqueeze(0).unsqueeze(0), size=(1080, 1920), mode='bicubic').squeeze()
 resized_grid = resized_grid.numpy()
