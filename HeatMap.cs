@@ -10,6 +10,10 @@ namespace MouseRecording
 	{
 		public HeatMap() { }
 
+		/// <summary>
+		/// Renders the heatmap based on the mouse coordinates recorded in the specified recording.
+		/// </summary>
+		/// <param name="currentRecordingName">The name of the current recording.</param>
 		public void Render(string currentRecordingName)
 		{
 			int numCellsX = 20;
@@ -32,6 +36,11 @@ namespace MouseRecording
 			}
 		}
 
+		/// <summary>
+		/// Extracts coordinates from the given DataTable.
+		/// </summary>
+		/// <param name="mouseCoordinates">DataTable containing mouse coordinates.</param>
+		/// <returns>List of tuples representing the coordinates.</returns>
 		private List<(int, int)> ExtractCoordinates(DataTable mouseCoordinates)
 		{
 			var recordedCoordinates = new List<(int, int)>();
@@ -45,6 +54,13 @@ namespace MouseRecording
 			return recordedCoordinates;
 		}
 
+		/// <summary>
+		/// Calculates the point counts for each cell in the heatmap grid.
+		/// </summary>
+		/// <param name="points">List of points representing mouse coordinates.</param>
+		/// <param numCellsX">Number of cells along the X axis.</param>
+		/// <param numCellsY">Number of cells along the Y axis.</param>
+		/// <returns>2D array representing the counts of points in each cell.</returns>
 		private int[,] CalculatePointCounts(List<(int, int)> points, int numCellsX, int numCellsY)
 		{
 			int[,] pointCounts = new int[numCellsX, numCellsY];
@@ -59,6 +75,11 @@ namespace MouseRecording
 			return pointCounts;
 		}
 
+		/// <summary>
+		/// Writes the point counts to a file.
+		/// </summary>
+		/// <param name="pointCounts">2D array of point counts.</param>
+		/// <param name="filePath">Path to the output file.</param>
 		private void WritePointCountsToFile(int[,] pointCounts, string filePath)
 		{
 			try
@@ -84,6 +105,10 @@ namespace MouseRecording
 			}
 		}
 
+		/// <summary>
+		/// Executes a Python script to render the heatmap.
+		/// </summary>
+		/// <param name="filePath">Path to the file containing point counts.</param>
 		private void ExecutePythonScript(string filePath)
 		{
 			string pythonScriptPath = @"D:\MouseRecording\render.py"; // Update this path
@@ -125,6 +150,11 @@ namespace MouseRecording
 			}
 		}
 
+		/// <summary>
+		/// Deserializes a list of coordinates from a byte array.
+		/// </summary>
+		/// <param name="coordinatesBytes">Byte array containing serialized coordinates.</param>
+		/// <returns>List of tuples representing the coordinates.</returns>
 		private List<(int, int)> DeserializeCoordinatesList(byte[] coordinatesBytes)
 		{
 			var recordedCoordinates = new List<(int, int)>();
