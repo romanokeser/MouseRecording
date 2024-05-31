@@ -7,13 +7,47 @@
         mc:Ignorable="d"
         Title="ListOfRecordings" Height="450" Width="800"
         ResizeMode="NoResize">
-    <Grid>
-        <Label Content="RECORDINGS" HorizontalAlignment="Left" Margin="117,25,0,0" VerticalAlignment="Top" FontSize="18"/>
-        <Button x:Name="backBtn" Content="Back" HorizontalAlignment="Left" Height="21" Margin="10,32,0,0" VerticalAlignment="Top" Width="68" Click="backBtn_Click"/>
-        <ListView HorizontalAlignment="Left" Height="227" Margin="117,134,0,0" VerticalAlignment="Top" Width="543" ItemsSource="{Binding Records}">
+    <Window.Resources>
+        <!-- Custom style for the back button with no hover visual -->
+        <Style x:Key="NoHoverBackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0">
+                            <Image Source="backButton.png" Height="34" Width="33"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <!-- No setters to keep the appearance the same on hover -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style for GridViewColumn Header to center align text and disable hover/click -->
+        <Style x:Key="NonClickableGridViewColumnHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#FF232323">
+        <Label Content="RECORDINGS" HorizontalAlignment="Center" Margin="0,32,0,0" VerticalAlignment="Top" FontSize="24" Background="Transparent" Foreground="White" FontWeight="Bold"/>
+        <Button x:Name="backBtn" HorizontalAlignment="Left" Height="34" Margin="10,32,0,0" VerticalAlignment="Top" Width="33" Click="backBtn_Click" Style="{StaticResource NoHoverBackButtonStyle}"/>
+        <ListView x:Name="listViewRecordings" HorizontalAlignment="Stretch" Height="227" Margin="0,134,0,0" VerticalAlignment="Top" ItemsSource="{Binding Records}" d:ItemsSource="{d:SampleData ItemCount=5}" Background="#FF313131" BorderThickness="0" BorderBrush="#002D4D86" UseLayoutRounding="True" FontSize="18" ClipToBounds="True">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="300">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Border Background="Red" Visibility="Collapsed"/>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

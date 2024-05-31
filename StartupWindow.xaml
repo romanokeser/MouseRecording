@@ -11,6 +11,5 @@
     <Grid Background="#FF181818">
         <Button x:Name="navBtnNewRec" Content="New rec" HorizontalAlignment="Left" Height="93" Margin="197,0,0,0" VerticalAlignment="Center" Width="182" Click="navBtnNewRec_Click" FontSize="24" FontWeight="Bold" Background="#FF980000" BorderThickness="0,0,0,0" AutomationProperties.HelpText="Start new recording" Foreground="White"/>
         <Button x:Name="navBtnManageRecs" Content="Manage" HorizontalAlignment="Left" Height="93" Margin="421,0,0,0" VerticalAlignment="Center" Width="182" Click="navBtnManageRecs_Click" Background="#FF980000" FontSize="24" FontWeight="Bold" BorderThickness="0,0,0,0" AutomationProperties.HelpText="Manage recordings" Foreground="White"/>
-        <Label x:Name="labelTest" Content="Label" HorizontalAlignment="Left" Height="44" Margin="138,60,0,0" VerticalAlignment="Top" Width="191" Foreground="White"/>
     </Grid>
 </Window>

@@ -7,6 +7,30 @@
         mc:Ignorable="d"
         Title="CreateNewRecordingWindow" Height="450" Width="800"
         ResizeMode="NoResize">
+    <Window.Resources>
+        <!-- Custom style for the back button -->
+        <Style x:Key="NoHoverBackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#00794545"/>
+            <Setter Property="BorderBrush" Value="#00707070"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <!-- Override visual states to do nothing on hover -->
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <!-- No setters to keep the appearance the same on hover -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid Background="#FF181818">
         <Grid.OpacityMask>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -17,7 +41,7 @@
         <Label Content="NEW MOUSE RECORD" HorizontalAlignment="Left" Margin="271,48,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" FontWeight="Bold"/>
         <TextBox x:Name="recordNameTextbox" HorizontalAlignment="Center" Height="40" Margin="0,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="280" VerticalContentAlignment="Center" />
         <Button x:Name="StartRecBtn" Content="RECORD NOW!" HorizontalAlignment="Left" Height="36" Margin="305,348,0,0" VerticalAlignment="Top" Width="178" Click="StartRecBtn_Click" Background="#FF980000" BorderBrush="#00707070" Foreground="White"/>
-        <Button x:Name="backBtn" HorizontalAlignment="Left" Height="41" Margin="22,22,0,0" VerticalAlignment="Top" Width="53" Background="#00794545" BorderBrush="#00707070" Click="backBtn_Click_1">
+        <Button x:Name="backBtn" HorizontalAlignment="Left" Height="41" Margin="22,22,0,0" VerticalAlignment="Top" Width="53" Click="backBtn_Click_1" Style="{StaticResource NoHoverBackButtonStyle}">
             <Image Source="backButton.png" Height="37" Width="45"/>
         </Button>
     </Grid>

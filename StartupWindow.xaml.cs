@@ -31,7 +31,6 @@ namespace MouseRecording
 		{
 			await Task.Delay(1000); // Delay for 1 second
 			SpecsUtility.GatherScreenDimensions();
-            labelTest.Content = SpecsUtility.ScreenWidth.ToString() + SpecsUtility.ScreenHeight.ToString();
 		}
 
 		private void navBtnNewRec_Click(object sender, RoutedEventArgs e)
