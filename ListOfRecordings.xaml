@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MouseRecording"
         mc:Ignorable="d"
-        Title="ListOfRecordings" Height="450" Width="800">
+        Title="ListOfRecordings" Height="450" Width="800"
+        ResizeMode="NoResize">
     <Grid>
         <Label Content="RECORDINGS" HorizontalAlignment="Left" Margin="117,25,0,0" VerticalAlignment="Top" FontSize="18"/>
         <Button x:Name="backBtn" Content="Back" HorizontalAlignment="Left" Height="21" Margin="10,32,0,0" VerticalAlignment="Top" Width="68" Click="backBtn_Click"/>

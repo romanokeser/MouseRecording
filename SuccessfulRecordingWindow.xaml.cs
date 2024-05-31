@@ -31,7 +31,7 @@ namespace MouseRecording
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"An error occurred: {ex.Message}");
+				System.Windows.MessageBox.Show($"An error occurred: {ex.Message}");
 			}
 			finally
 			{
@@ -39,7 +39,7 @@ namespace MouseRecording
 			}
 		}
 
-		private void backBtn_Click(object sender, RoutedEventArgs e)
+		private void backBtn2_Click(object sender, RoutedEventArgs e)
 		{
 			var startupWindow = new StartupWindow();
 			startupWindow.Activate();

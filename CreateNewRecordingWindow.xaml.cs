@@ -78,10 +78,7 @@ namespace MouseRecording
 			this.Close();
 		}
 
-		/// <summary>
-		/// Event handler for the Back button click event. Navigates back to the startup window.
-		/// </summary>
-		private void backBtn_Click(object sender, RoutedEventArgs e)
+		private void backBtn_Click_1(object sender, RoutedEventArgs e)
 		{
 			var startupWindow = new StartupWindow();
 			startupWindow.Show();

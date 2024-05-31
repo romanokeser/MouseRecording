@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MouseRecording.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,19 @@ namespace MouseRecording
     /// </summary>
     public partial class StartupWindow : Window
     {
+
         public StartupWindow()
         {
 			InitializeComponent();
+            InitializeScreenDimensionsAsync();
         }
+
+		private async void InitializeScreenDimensionsAsync()
+		{
+			await Task.Delay(1000); // Delay for 1 second
+			SpecsUtility.GatherScreenDimensions();
+            labelTest.Content = SpecsUtility.ScreenWidth.ToString() + SpecsUtility.ScreenHeight.ToString();
+		}
 
 		private void navBtnNewRec_Click(object sender, RoutedEventArgs e)
 		{

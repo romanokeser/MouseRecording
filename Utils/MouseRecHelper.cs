@@ -12,14 +12,14 @@ namespace MouseRecording.Utils
 		private static IntPtr hookId = IntPtr.Zero;
 		private static LowLevelMouseProc mouseProc;
 
-		public static event EventHandler<MouseEventArgs> MouseMove;
+		public static event EventHandler<System.Windows.Input.MouseEventArgs> MouseMove;
 
-		public static void StartTracking(Action<object, MouseEventArgs> mouseMoveHandler)
+		public static void StartTracking(Action<object, System.Windows.Input.MouseEventArgs> mouseMoveHandler)
 		{
 			mouseProc = HookCallback;
 			hookId = SetHook(mouseProc);
 
-			MouseMove += new EventHandler<MouseEventArgs>(mouseMoveHandler);
+			MouseMove += new EventHandler<System.Windows.Input.MouseEventArgs>(mouseMoveHandler);
 		}
 
 		public static void StopTracking()
@@ -48,7 +48,7 @@ namespace MouseRecording.Utils
 				// Get the mouse position relative to the screen
 				System.Windows.Point screenPosition = new System.Windows.Point(hookStruct.pt.x, hookStruct.pt.y);
 
-				var mouseEventArgs = new MouseEventArgs(Mouse.PrimaryDevice, 0)
+				var mouseEventArgs = new System.Windows.Input.MouseEventArgs(Mouse.PrimaryDevice, 0)
 				{
 					RoutedEvent = UIElement.MouseMoveEvent
 				};

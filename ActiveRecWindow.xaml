@@ -5,11 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MouseRecording"
         mc:Ignorable="d"
-        Title="RecordingFinalWindow" Height="450" Width="800">
-    <Grid>
-        <Label Content="Your mouse movement is being recorded. Stop at any time and analyze the movement" HorizontalAlignment="Center" Margin="0,81,0,0" VerticalAlignment="Top"/>
-        <Label Content="The longer you record, the heatmap quality gets higher" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top" Width="328"/>
-        <Button x:Name="stopRecordingBtn" Content="STOP" HorizontalAlignment="Left" Height="32" Margin="308,314,0,0" VerticalAlignment="Top" Width="164" Click="stopRecordingBtn_Click"/>
-
+        Title="RecordingFinalWindow" Height="450" Width="800"
+        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow">
+    <Grid Background="#FF181818">
+        <Button x:Name="stopRecordingBtn" Content="STOP" HorizontalAlignment="Left" Height="32" Margin="308,314,0,0" VerticalAlignment="Top" Width="164" Click="stopRecordingBtn_Click" Background="#FF980000" Foreground="White" BorderBrush="#00707070"/>
+        <Label x:Name="titleLabel" Content="Your mouse movement" Margin="0,75,0,0" VerticalAlignment="Top" Width="780" VerticalContentAlignment="Center" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+        <Label x:Name="titleLableBottom" Content="is being recorded" Margin="170,110,170,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Foreground="White" FontSize="24" FontWeight="Bold"/>
+        <Label x:Name="tittleBottom1" Content="Stop at any time and analyze the movement." HorizontalAlignment="Center" Margin="0,186,0,0" VerticalAlignment="Top" Foreground="White" Width="780" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Label x:Name="titleBottom" Content="The longer you record, the heatmap quality gets higher" HorizontalAlignment="Center" Margin="0,217,0,0" VerticalAlignment="Top" Width="800" HorizontalContentAlignment="Center" Foreground="White"/>
+        <Label x:Name="recLabel" Content="Rec" HorizontalAlignment="Left" Margin="703,358,0,0" VerticalAlignment="Top" Foreground="White" FontSize="26" FontWeight="Bold"/>
+        <Image x:Name="recImage" Source="/Textures/circle.png" Margin="678,373,95,44"></Image>
     </Grid>
 </Window>

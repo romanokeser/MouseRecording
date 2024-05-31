@@ -64,15 +64,32 @@ namespace MouseRecording
 		private int[,] CalculatePointCounts(List<(int, int)> points, int numCellsX, int numCellsY)
 		{
 			int[,] pointCounts = new int[numCellsX, numCellsY];
-
+			int screenWidth = SpecsUtility.ScreenWidth;
+			int screenHeight = SpecsUtility.ScreenHeight;
 			foreach (var (x, y) in points)
 			{
-				int cellX = (int)Math.Floor((double)x / (1920 / numCellsX));
-				int cellY = (int)Math.Floor((double)y / (1080 / numCellsY));
-				pointCounts[cellX, cellY]++;
+				if (IsPointInsideBounds(x, y, screenWidth, screenHeight))
+				{
+					int cellX = (int)Math.Floor((double)x / (screenWidth / numCellsX));
+					int cellY = (int)Math.Floor((double)y / (screenHeight / numCellsY));
+
+					if (cellX >= 0 && cellX < numCellsX && cellY >= 0 && cellY < numCellsY) // Additional boundary check
+					{
+						pointCounts[cellX, cellY]++;
+					}
+				}
 			}
 
 			return pointCounts;
+		}
+
+		/// <summary>
+		/// Checks if the given point is inside the 1920x1080 bounds.
+		/// </summary>
+		/// <returns>True if the point is inside the bounds, otherwise false.</returns>
+		private bool IsPointInsideBounds(int x, int y, int screenWidth, int screenHeight)
+		{
+			return x >= 0 && x < screenWidth && y >= 0 && y < screenHeight;
 		}
 
 		/// <summary>

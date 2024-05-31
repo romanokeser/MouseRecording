@@ -5,13 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MouseRecording"
         mc:Ignorable="d"
-        Title="Successful Recording" Height="450" Width="800">
-    <Grid>
-        <Label Content="Success!" HorizontalAlignment="Center" Margin="0,76,0,0" VerticalAlignment="Top" FontSize="22"/>
-        <Label Content="You can now review your mouse activity" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="reviewHeatmapBtn" Content="REVIEW" HorizontalAlignment="Left" Height="41" Margin="328,322,0,0" VerticalAlignment="Top" Width="159" Click="reviewHeatmapBtn_Click"/>
-        <Button x:Name="backBtn" Content="Back" HorizontalAlignment="Left" Height="24" Margin="10,27,0,0" VerticalAlignment="Top" Width="81" Click="backBtn_Click"/>
+        Title="Successful Recording" Height="450" Width="800"
+        ResizeMode="NoResize">
+    <Grid Background="#FF181818">
+        <Label Content="Success!" HorizontalAlignment="Center" Margin="0,66,0,0" VerticalAlignment="Top" FontSize="24" Foreground="White" FontWeight="Bold"/>
+        <Label Content="You can now review your mouse activity" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="White" Margin="0,217,0,0"/>
+        <Button x:Name="reviewHeatmapBtn" Content="REVIEW" HorizontalAlignment="Left" Height="41" Margin="328,322,0,0" VerticalAlignment="Top" Width="159" Click="reviewHeatmapBtn_Click" Background="#FF980000" BorderBrush="#00707070" Foreground="White"/>
 
+        <Button x:Name="backBtn" Margin="22,22,734,364" Background="#00DDDDDD" BorderBrush="#00707070" Click="backBtn2_Click">
+            <Image Source="backButton.png" Height="37" Width="45"/>
+        </Button>
+
+        <Image Source="/Textures/pointerLogo.png" Margin="332,131,332,230"></Image>
         <local:LoadingScreen x:Name="loadingScreen" Visibility="Collapsed"/>
     </Grid>
 </Window>
