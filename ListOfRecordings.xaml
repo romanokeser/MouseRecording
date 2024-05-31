@@ -29,27 +29,40 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style for GridViewColumn Header to center align text and disable hover/click -->
+        <!-- Style for GridViewColumn Header to disable it -->
         <Style x:Key="NonClickableGridViewColumnHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+
+        <!-- Style for ListViewItem to set text color to white and center content -->
+        <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
     </Window.Resources>
 
     <Grid Background="#FF232323">
         <Label Content="RECORDINGS" HorizontalAlignment="Center" Margin="0,32,0,0" VerticalAlignment="Top" FontSize="24" Background="Transparent" Foreground="White" FontWeight="Bold"/>
         <Button x:Name="backBtn" HorizontalAlignment="Left" Height="34" Margin="10,32,0,0" VerticalAlignment="Top" Width="33" Click="backBtn_Click" Style="{StaticResource NoHoverBackButtonStyle}"/>
-        <ListView x:Name="listViewRecordings" HorizontalAlignment="Stretch" Height="227" Margin="0,134,0,0" VerticalAlignment="Top" ItemsSource="{Binding Records}" d:ItemsSource="{d:SampleData ItemCount=5}" Background="#FF313131" BorderThickness="0" BorderBrush="#002D4D86" UseLayoutRounding="True" FontSize="18" ClipToBounds="True">
+        <ListView x:Name="listViewRecordings" HorizontalAlignment="Stretch" Height="200" Margin="0,134,0,0" VerticalAlignment="Top" ItemsSource="{Binding Records}" d:ItemsSource="{d:SampleData ItemCount=5}" Background="#FF313131" BorderThickness="0" BorderBrush="#002D4D86" UseLayoutRounding="True" FontSize="18" ClipToBounds="True" SelectionChanged="listViewRecordings_SelectionChanged">
             <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="300">
-                        <GridViewColumn.HeaderTemplate>
+                <GridView ColumnHeaderContainerStyle="{StaticResource NonClickableGridViewColumnHeaderStyle}">
+                    <GridViewColumn Width="750">
+                        <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Background="Red" Visibility="Collapsed"/>
+                                <TextBlock Text="{Binding Name}" TextAlignment="Center"/>
                             </DataTemplate>
-                        </GridViewColumn.HeaderTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemStyle}"/>
+            </ListView.ItemContainerStyle>
         </ListView>
+        <Button x:Name="reviewButton" Content="Review" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,350,0,0" Width="100" Height="30" Click="reviewButton_Click" Visibility="Collapsed"/>
+        <local:LoadingScreen x:Name="loadingScreen" Visibility="Collapsed"/>
+
     </Grid>
+
 </Window>
