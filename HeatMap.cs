@@ -1,4 +1,6 @@
 ﻿using MouseRecording.Utils;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -58,14 +60,15 @@ namespace MouseRecording
 		/// Calculates the point counts for each cell in the heatmap grid.
 		/// </summary>
 		/// <param name="points">List of points representing mouse coordinates.</param>
-		/// <param numCellsX">Number of cells along the X axis.</param>
-		/// <param numCellsY">Number of cells along the Y axis.</param>
+		/// <param name="numCellsX">Number of cells along the X axis.</param>
+		/// <param name="numCellsY">Number of cells along the Y axis.</param>
 		/// <returns>2D array representing the counts of points in each cell.</returns>
 		private int[,] CalculatePointCounts(List<(int, int)> points, int numCellsX, int numCellsY)
 		{
 			int[,] pointCounts = new int[numCellsX, numCellsY];
 			int screenWidth = SpecsUtility.ScreenWidth;
 			int screenHeight = SpecsUtility.ScreenHeight;
+
 			foreach (var (x, y) in points)
 			{
 				if (IsPointInsideBounds(x, y, screenWidth, screenHeight))
@@ -73,7 +76,7 @@ namespace MouseRecording
 					int cellX = (int)Math.Floor((double)x / (screenWidth / numCellsX));
 					int cellY = (int)Math.Floor((double)y / (screenHeight / numCellsY));
 
-					if (cellX >= 0 && cellX < numCellsX && cellY >= 0 && cellY < numCellsY) // Additional boundary check
+					if (cellX >= 0 && cellX < numCellsX && cellY >= 0 && cellY < numCellsY)
 					{
 						pointCounts[cellX, cellY]++;
 					}
@@ -84,7 +87,7 @@ namespace MouseRecording
 		}
 
 		/// <summary>
-		/// Checks if the given point is inside the 1920x1080 bounds.
+		/// Checks if the given point is inside the screen bounds.
 		/// </summary>
 		/// <returns>True if the point is inside the bounds, otherwise false.</returns>
 		private bool IsPointInsideBounds(int x, int y, int screenWidth, int screenHeight)
@@ -128,13 +131,24 @@ namespace MouseRecording
 		/// <param name="filePath">Path to the file containing point counts.</param>
 		private void ExecutePythonScript(string filePath)
 		{
-			string pythonScriptPath = @"D:\MouseRecording\render.py"; // Update this path
-			string pythonInterpreter = @"python"; // Use "python" or "python3" depending on your setup
+			string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			// Define the relative path to render.exe using a verbatim string literal
+			string relativePath = @"dist\render\render.exe";
+
+			// Combine the base directory with the relative path to get the full path
+			string pythonScriptPath = Path.Combine(baseDirectory, relativePath);
+
+			if (!File.Exists(pythonScriptPath))
+			{
+				Console.WriteLine($"Error: The specified Python script file does not exist at {pythonScriptPath}");
+				return;
+			}
 
 			var startInfo = new ProcessStartInfo
 			{
-				FileName = pythonInterpreter,
-				Arguments = $"\"{pythonScriptPath}\" \"{filePath}\"",
+				FileName = pythonScriptPath,
+				Arguments = $"\"{filePath}\"",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
@@ -156,6 +170,11 @@ namespace MouseRecording
 							Console.WriteLine("Errors:");
 							Console.Write(errorResult);
 						}
+						else
+						{
+							process.WaitForExit();
+							OpenHeatmapPng(Path.Combine(baseDirectory, "heatmap.png"));
+						}
 
 						process.WaitForExit();
 					}
@@ -164,6 +183,29 @@ namespace MouseRecording
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error executing Python script: {ex.Message}");
+			}
+		}
+
+		/// <summary>
+		/// Opens the generated heatmap PNG file.
+		/// </summary>
+		/// <param name="filePath">Path to the heatmap PNG file.</param>
+		private void OpenHeatmapPng(string filePath)
+		{
+			try
+			{
+				if (File.Exists(filePath))
+				{
+					Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+				}
+				else
+				{
+					Console.WriteLine("Error: The heatmap image file does not exist.");
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error opening the heatmap image: {ex.Message}");
 			}
 		}
 

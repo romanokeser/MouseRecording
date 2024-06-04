@@ -39,4 +39,10 @@ plt.colorbar()
 plt.title('Interpolated Heatmap of Grid Values (1920x1080)')
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
-plt.show()
+
+# Save the heatmap to a file
+output_file = 'heatmap.png'
+plt.savefig(output_file)
+
+# Notify the user
+print(f"Heatmap saved as {output_file}")

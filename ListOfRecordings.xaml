@@ -60,7 +60,7 @@
                 <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemStyle}"/>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Button x:Name="reviewButton" Content="Review" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,350,0,0" Width="100" Height="30" Click="reviewButton_Click" Visibility="Collapsed"/>
+        <Button x:Name="reviewButton" Content="Review" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="-8,350,0,0" Width="100" Height="30" Click="ReviewButton_Click" Visibility="Collapsed" Background="#FF980000" BorderBrush="#00707070" Foreground="White" FontWeight="Bold" FontSize="16"/>
         <local:LoadingScreen x:Name="loadingScreen" Visibility="Collapsed"/>
 
     </Grid>

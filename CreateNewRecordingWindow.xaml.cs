@@ -69,13 +69,20 @@ namespace MouseRecording
 		/// </summary>
 		private void StartRecBtn_Click(object sender, RoutedEventArgs e)
 		{
-			_recordedCoordinates.Clear(); // Clear previously recorded coordinates
-			StartMouseTimer();
+			if (string.IsNullOrEmpty(recordNameTextbox.Text))
+			{
+				System.Windows.MessageBox.Show("Name field is required!");
+			}
+			else
+			{
+				_recordedCoordinates.Clear(); // Clear previously recorded coordinates
+				StartMouseTimer();
 
-			var recordingFinalWindow = new ActiveRecWindow(this);
-			recordingFinalWindow.Show();
-			recordingFinalWindow.Activate();
-			this.Close();
+				var recordingFinalWindow = new ActiveRecWindow(this);
+				recordingFinalWindow.Show();
+				recordingFinalWindow.Activate();
+				this.Close();
+			}
 		}
 
 		private void backBtn_Click_1(object sender, RoutedEventArgs e)

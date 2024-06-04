@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,28 +23,55 @@ namespace MouseRecording
 		{
 			InitializeComponent();
 			DataContext = this; // Set the DataContext to this instance of ListOfRecordings
-			Records = new ObservableCollection<RecordModel>(RetrieveRecordsFromDatabase());
+			Records = new ObservableCollection<RecordModel>();
+
+			try
+			{
+				Records = new ObservableCollection<RecordModel>(RetrieveRecordsFromDatabase());
+			}
+			catch (Exception ex)
+			{
+				LogError(ex);
+				System.Windows.MessageBox.Show($"An error occurred while retrieving records: {ex.Message}");
+			}
 		}
 
 		private void backBtn_Click(object sender, RoutedEventArgs e)
 		{
-			var startupWindow = new StartupWindow();
-			startupWindow.Show();
-			this.Close();
+			try
+			{
+				var startupWindow = new StartupWindow();
+				startupWindow.Show();
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				LogError(ex);
+				System.Windows.MessageBox.Show($"An error occurred while navigating back: {ex.Message}");
+			}
 		}
 
 		private List<RecordModel> RetrieveRecordsFromDatabase()
 		{
 			List<RecordModel> records = new List<RecordModel>();
 
-			DataTable dataTable = DatabaseHelper.GetMouseCoordinates();
-
-			foreach (DataRow row in dataTable.Rows)
+			try
 			{
-				RecordModel record = new RecordModel();
-				record.Name = row["record_name"].ToString();
-				records.Add(record);
+				DataTable dataTable = DatabaseHelper.GetMouseCoordinates();
+
+				foreach (DataRow row in dataTable.Rows)
+				{
+					RecordModel record = new RecordModel();
+					record.Name = row["record_name"].ToString();
+					records.Add(record);
+				}
 			}
+			catch (Exception ex)
+			{
+				LogError(ex);
+				System.Windows.MessageBox.Show($"An error occurred while retrieving records from database: {ex.Message}");
+			}
+
 			return records;
 		}
 
@@ -59,12 +87,11 @@ namespace MouseRecording
 			}
 		}
 
-		private async void reviewButton_Click(object sender, RoutedEventArgs e)
+		private async void ReviewButton_Click(object sender, RoutedEventArgs e)
 		{
 			// Implement the review logic here
 			if (!string.IsNullOrEmpty(_selectedRecordingName))
 			{
-
 				try
 				{
 					loadingScreen.Visibility = Visibility.Visible; // Show loading screen
@@ -74,6 +101,7 @@ namespace MouseRecording
 				}
 				catch (Exception ex)
 				{
+					LogError(ex);
 					System.Windows.MessageBox.Show($"An error occurred: {ex.Message}");
 				}
 				finally
@@ -81,6 +109,14 @@ namespace MouseRecording
 					loadingScreen.Visibility = Visibility.Collapsed; // Hide loading screen
 				}
 			}
+		}
+
+		private void LogError(Exception ex)
+		{
+			// Implement logging logic here
+			// You can log to a file, Windows Event Log, or any other logging framework
+			string logFilePath = "error_log.txt";
+			File.AppendAllText(logFilePath, $"{DateTime.Now}: {ex.ToString()}{Environment.NewLine}");
 		}
 	}
 }

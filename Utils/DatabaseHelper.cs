@@ -7,12 +7,13 @@ namespace MouseRecording.Utils
 	public class DatabaseHelper
 	{
 		private const string DatabaseFileName = "mouse_coordinates.db";
+		private static readonly string DatabaseFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mouse_coordinates.db");
 
 		public static void InitializeDatabase()
 		{
-			if (!File.Exists(DatabaseFileName))
+			if (!File.Exists(DatabaseFilePath))
 			{
-				SQLiteConnection.CreateFile(DatabaseFileName);
+				SQLiteConnection.CreateFile(DatabaseFilePath);
 
 				using (var connection = new SQLiteConnection($"Data Source={DatabaseFileName};Version=3;"))
 				{

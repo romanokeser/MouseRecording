@@ -7,42 +7,37 @@ namespace MouseRecording
 	public partial class ActiveRecWindow : Window
 	{
 		private CreateNewRecordingWindow _createNewRecordingWindow;
-		private DispatcherTimer _beepTimer;
+		private DispatcherTimer _toggleImageTimer;
 		private bool _isImageVisible;
-		private double _imageTurnedOffTime = 500; 
-		private double _imageTurnedOnTime = 1500;
+
 		public ActiveRecWindow(CreateNewRecordingWindow createNewRecordingWindow)
 		{
 			InitializeComponent();
 			_createNewRecordingWindow = createNewRecordingWindow;
 
-			// Initialize the DispatcherTimer
-			_beepTimer = new DispatcherTimer();
-			_beepTimer.Interval = TimeSpan.FromMilliseconds(2); // 1 second total interval (0.7s visible + 0.3s hidden)
-			_beepTimer.Tick += OnBeepTimerTick;
-			_beepTimer.Start();
-
-			_isImageVisible = true;
+			_toggleImageTimer = new DispatcherTimer();
+			_toggleImageTimer.Interval = TimeSpan.FromSeconds(0.3);
+			_toggleImageTimer.Tick += ToggleImageVisibility;
+			_toggleImageTimer.Start();
 		}
 
-		private void OnBeepTimerTick(object sender, EventArgs e)
+		private void ToggleImageVisibility(object sender, EventArgs e)
 		{
 			if (_isImageVisible)
 			{
-				recImage.Opacity = 0; // Hide the image
-				_beepTimer.Interval = TimeSpan.FromMilliseconds(_imageTurnedOffTime); // Set the interval to 0.3 seconds
+				recImage.Visibility = Visibility.Hidden;
 			}
 			else
 			{
-				recImage.Opacity = 1; // Show the image
-				_beepTimer.Interval = TimeSpan.FromMilliseconds(_imageTurnedOnTime); // Set the interval to 0.7 seconds
+				recImage.Visibility = Visibility.Visible;
 			}
-
-			_isImageVisible = !_isImageVisible; // Toggle the visibility flag
+			_isImageVisible = !_isImageVisible;
 		}
 
 		private void stopRecordingBtn_Click(object sender, RoutedEventArgs e)
 		{
+			_toggleImageTimer.Stop(); // Stop the timer when stopping the recording
+
 			_createNewRecordingWindow.StopMouseTimer();
 
 			var successfulRecordingWindow = new SuccessfulRecordingWindow(_createNewRecordingWindow);
