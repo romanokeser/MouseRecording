@@ -12,6 +12,7 @@ namespace MouseRecording
 	{
 		private CreateNewRecordingWindow _createNewRecordingWindow;
 		private HeatMap _heatMap;
+
 		public SuccessfulRecordingWindow(CreateNewRecordingWindow createNewRecordingWindow)
 		{
 			_createNewRecordingWindow = createNewRecordingWindow;
@@ -26,8 +27,8 @@ namespace MouseRecording
 
 			try
 			{
-				string imagePath = RecordingNameHolder.CurrentRecordingName;
-				await Task.Run(() => _heatMap.Render(imagePath));
+				string imagePath = RecordingNameHolder.CurrentRecordingName;	//Get the current record name from Util script
+				await Task.Run(() => _heatMap.Render(imagePath));	//load Python script
 			}
 			catch (Exception ex)
 			{

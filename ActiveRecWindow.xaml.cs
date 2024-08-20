@@ -36,14 +36,23 @@ namespace MouseRecording
 
 		private void stopRecordingBtn_Click(object sender, RoutedEventArgs e)
 		{
-			_toggleImageTimer.Stop(); // Stop the timer when stopping the recording
+			try
+			{
+				_toggleImageTimer.Stop(); // Stop the timer when stopping the recording
 
-			_createNewRecordingWindow.StopMouseTimer();
+				_createNewRecordingWindow.StopMouseTimer();
 
-			var successfulRecordingWindow = new SuccessfulRecordingWindow(_createNewRecordingWindow);
-			successfulRecordingWindow.Activate();
-			successfulRecordingWindow.Show();
-			this.Close();
+				var successfulRecordingWindow = new SuccessfulRecordingWindow(_createNewRecordingWindow);
+				successfulRecordingWindow.Activate();
+				successfulRecordingWindow.Show();
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				System.Windows.MessageBox.Show("Woops.. " + ex.Message);
+
+				throw;
+			}
 		}
 	}
 }
